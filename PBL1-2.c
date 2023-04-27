@@ -50,8 +50,9 @@ struct Node* createNode( double data ) {
 }
 
 //Hàm dùng để chèn một Node mới vào danh sách theo thứ tự tăng dần.
-void sorted_Insert (struct Node** head, struct Node* newNode){
-    
+void sorted_Insert (struct Node** head, double data){
+
+    struct Node* newNode = createNode(data);
     //Nếu danh sách rỗng thì chèn Node mới vào đầu danh sách.
     if(*head == NULL){
         *head = newNode;
@@ -88,10 +89,7 @@ void readfromFile (char* filename,int list[], int rows, int columns){
         char *token = strtok(line," ");
         while ( token != NULL){
             double value = atof(token);//Trả dữ liệu về lại dạng số thực.
-            struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
-            newNode->data = value;
-            newNode->next = NULL;
-            sorted_Insert(&newRows,newNode);
+            sorted_Insert(&newRows,value);
             token = strtok(NULL, " ");
         }
     list[i++] = newRows;
@@ -133,7 +131,7 @@ int main(){
     printf("So hang la %d\nSo cot la %d\n",rows,columns);
 
     //Lấy dữ liệu từ file.
-    int list[rows+2];
+    int list[MAX_LINE_LEN];
     readfromFile("Matrix2.txt",list,rows,columns);
 
     //In ma trận ra màn hình.
@@ -142,14 +140,14 @@ int main(){
     //Thêm mỗi hàng một phần tử nhập từ bàn phím.
     double n;
     printf("Nhap %d phan tu de them vao moi hang: \n",rows);
-    for (int i = 1; i<columns; i++){
-        // printf("Phan tu thu %d: ",i+1);
+    for (int i = 1; i<=rows; i++){
+        // printf("Phan tu thu %d: ",i);
         // scanf("%lf",&n);
-        n = i;
-        struct Node* newNode = createNode(n);
-        struct Node* insertToken = list[i];
-        sorted_Insert(&insertToken,newNode);
+        n=i;
+        struct Node* head = list[i];
+        sorted_Insert(&head,n);
     }
+
     saveMatrixToFile("RESULT1.OUT.txt",list,rows);
     return 0;
 }
