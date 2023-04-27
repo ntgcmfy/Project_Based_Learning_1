@@ -62,7 +62,7 @@ void sorted_Insert (struct Node** head, double data){
     struct Node* current = *head;
     struct Node* prev = NULL;
     //Tìm vị trí phù hợp để chèn Node vào danh sách.
-    while (current -> next != NULL && current->next->data < newNode->data){
+    while (current -> next != NULL && current->next->data <= newNode->data){
         prev = current;
         current = current->next;
     }
@@ -104,9 +104,11 @@ void saveMatrixToFile(char *filename,int list[], int rows) {
     for (int i = 1; i <= rows; i++) {
         struct Node *current = list[i];
         while (current != NULL) {
-            fprintf(fp, "%g ", current->data);
+            fprintf(fp, "%g", current->data);
+            if(current->next != NULL) fprintf(fp," ");
             current = current->next;
         }
+        if (i != rows)
         fprintf(fp, "\n");
     }
     fclose(fp);
@@ -146,6 +148,7 @@ int main(){
         n=i;
         struct Node* head = list[i];
         sorted_Insert(&head,n);
+        list[i] = head;//cập nhật địa chỉ đầu tiên của hàng.
     }
 
     saveMatrixToFile("RESULT1.OUT.txt",list,rows);
