@@ -1,156 +1,305 @@
 #include <stdio.h>
+#include <math.h>
+#include <conio.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <conio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define MAX_LINE_LEN 1000
-
-struct Node{
-    double data;
-    struct Node *next;
+#define MAX 1000
+//Khai Báo 1 cái Node
+struct node{
+	double data;
+	struct node *pNext;
 };
+typedef struct node NODE;
 
+//Khai báo cấu trúc 1 stack
+struct stack{
+	NODE *pTop;//dùng con trỏ đầu để quản lí stack
+};
+typedef struct stack STACK;
 
-//Hàm đếm số hàng và số cột của ma trận.
-void countRows_ColumnsfromFile(char *filename,int *rows, int *columns){
-    FILE *fp;
-    fp = freopen(filename,"r",stdin);
-
-    char c;
-    *rows = 0;
-    *columns = 0;
-    c = getc(fp);
-    while (c != EOF){
-        if(c == '\n'){
-            (*rows)++;
-        }
-        c = getc(fp);
-    }
-    //Tới cuối file thì tính thêm 1 hàng.
-    (*rows)++;
-    //Đưa con trỏ về đầu file
-    rewind(fp);
-    //Đếm số cột
-    while (c!= '\n'){
-        if(c == ' '){
-            (*columns)++;
-        }
-    c = getc(fp);
-    }
-    //Tới cuối hàng thì tính thêm một cột.
-    (*columns)++;
-    fclose(fp);
+//khởi tạo stack
+void KhoiTaoStack(STACK &s){
+	s.pTop=NULL;
 }
 
-//Tạo ra một Node mới chứa dữ liệu cần chèn.    
-struct Node* createNode( double data ) {
-    struct Node* node = (struct Node *) malloc(sizeof(struct Node));
-    node -> data = data;
-    node->next = NULL;
-    return node;
+// Khởi tạo 1 node
+NODE *KhoiTaoNode(double x){
+     NODE *p=new NODE;
+     p->data=x;
+     p->pNext=NULL;
+     return p;
 }
 
-//Hàm dùng để chèn một Node mới vào danh sách theo thứ tự tăng dần.
-void sorted_Insert (struct Node** head, double data){
-
-    struct Node* newNode = createNode(data);
-    //Nếu danh sách rỗng thì chèn Node mới vào đầu danh sách.
-    if(*head == NULL){
-        *head = newNode;
-        return;
-    }
-
-    struct Node* current = *head;
-    struct Node* prev = NULL;
-    //Tìm vị trí phù hợp để chèn Node vào danh sách.
-    while (current -> next != NULL && current->next->data <= newNode->data){
-        prev = current;
-        current = current->next;
-    }
-    //Nếu vị trí cần chèn ở đầu danh sách.
-    if (prev == NULL){
-        newNode->next = *head;
-        *head = newNode;
-    } else {
-        prev->next = newNode;
-        newNode->next = current;
-    }
+//Kiểm tra stack có rỗng hay không
+bool IsEmpty(STACK s){
+    if(s.pTop==NULL) return true;
+    else return false;
+		
 }
 
-//Đọc từ file các danh sách liên kết và lưu các con trỏ chỉ đến các hàng trong mảng List.
-void readfromFile (char* filename,int list[], int rows, int columns){
-    FILE *fp;
-    fp = freopen(filename,"r",stdin);
+//Thêm 1 phần tử vào đầu stack
+bool Push(STACK &s, NODE *p){
+	if(p==NULL) return false;
+	if(IsEmpty(s)==true){
+		s.pTop=p;
+	}
+	else{
+		p->pNext=s.pTop;
+		s.pTop=p;
+	}
+	return true;
+}
 
-    char line[MAX_LINE_LEN];
-    int i = 1;
-    while (fgets(line,MAX_LINE_LEN,fp) != NULL){
-        struct Node *newRows = NULL;
-        //Lấy từng phần tử trong hàng ra và đổi sang kiểu char.
-        char *token = strtok(line," ");
-        while ( token != NULL){
-            double value = atof(token);//Trả dữ liệu về lại dạng số thực.
-            sorted_Insert(&newRows,value);
-            token = strtok(NULL, " ");
+//Lấy phần tử đầu stack và trả về giá trị của nó đồng thời hủy nó đi
+bool Pop(STACK &s, double &x ){
+	if(IsEmpty(s)==true) return false;
+	else{
+		NODE *p=s.pTop;
+		x=p->data;
+		s.pTop=s.pTop->pNext;
+		delete p;
+	}
+	return true;
+}
+
+//xem thông tin phần tử đầu Stack và không mất giá trị
+bool Top(STACK &s, double &x){
+	if(IsEmpty(s)==true) return false;
+	else{
+		x=s.pTop->data;
+	}
+	return true;
+}
+
+//Đảo ngược giá trị của stack
+void Reverse(STACK &s){
+	STACK temp;
+	KhoiTaoStack(temp);
+	for(NODE *k=s.pTop;k!=NULL;k=k->pNext){
+		NODE *p=KhoiTaoNode(k->data);
+		Push(temp,p);
+	}
+	s=temp;
+}
+
+//Hàm Xuất 1 Dòng Ứng Với 1 Stack
+void Print_Stack(STACK &s){
+	for(NODE *k=s.pTop;k!=NULL;k=k->pNext){
+		printf("%.2lf ",k->data);
+	}
+}
+
+//Hàm ghi File Ma Trận Sau Khi Thêm Mỗi Hàng 1 phần tử
+int Write_File1(char *filename,STACK s[],int N){
+	FILE *fp;
+	fopen_s(&fp,filename,"w");
+	char c='\n';
+	if(fp==NULL) return 0;
+	else{
+		for(int i=0;i<N;i++){
+			for(NODE *k=s[i].pTop;k!=NULL;k=k->pNext){
+		    fprintf(fp,"%.3lf  ",k->data);
+	        }
+	    fprintf(fp,"%c",c);
         }
-    list[i++] = newRows;
-    }
-    fclose(fp);
-}
-
-//Hàm lưu ma trận vào file chỉ định.
-void saveMatrixToFile(char *filename,int list[], int rows) {
-    FILE *fp = fopen(filename, "w");
-
-    for (int i = 1; i <= rows; i++) {
-        struct Node *current = list[i];
-        while (current != NULL) {
-            fprintf(fp, "%g", current->data);
-            if(current->next != NULL) fprintf(fp," ");
-            current = current->next;
-        }
-        if (i != rows)
-        fprintf(fp, "\n");
     }
     fclose(fp);
+    return 1;
 }
 
-//Hàm in ma trận ra màn hình.
-void printMatrix(int list[], int rows) {
-    for (int i = 1; i <= rows; i++) {
-        struct Node *current = list[i];
-        while (current != NULL) {
-            printf("%g ", current->data);
-            current = current->next;
-        }
-        printf("\n");
-    }
-} 
+//Hàm Ghi File Các nghiệm X của Hệ Phương Trình
+int Write_File2(char *filename,double X[],int N){
+	FILE *fp;
+	fopen_s(&fp,filename,"w");
+	if(fp==NULL) return 0;
+else{
+	for(int i=0;i<N;i++){
+		fprintf(fp,"X%d=%.3lf\n",i+1,X[i]);
+	}
+  }
+  fclose(fp);
+  return 1;
+}
+// Hàm Xuất Ma Trận Mảng Hai Chiều
+void Print_Matrix(double a[][50], int N){
+	for(int i=0;i<N;i++){
+		for(int j=0;j<=N;j++){
+			printf("%3.3lf  ",a[i][j]);
+			if(j==N) printf("\n");
+		}
+	}
+}
 
+//Hàm Đọc Các Giá Trị Từ File Vào 1 Stack
+int Read_File(char *filename,STACK &k){
+    FILE *fp=NULL;
+    double x;
+    fopen_s(&fp,filename,"r");
+     if(fp==NULL) return 0;
+   else{ while(fscanf(fp,"%lf ",&x)!=EOF){//Đọc Hết Các Giá Trị trong File vào Stack k
+	NODE *p=KhoiTaoNode(x);
+	   Push(k,p);
+	  }Reverse(k);//Hoán đổi ngược lại các vị trí
+    }fclose(fp);
+   return 1;
+}
+
+//Hàm Ghi lại Các Giá trị Đọc Được vào Các Stack với mỗi Stack là một Ma Trận 
+void Make_Matrix(STACK s[],STACK &k,int &N){
+	for(int i=0;i<N;i++){   //Phân loại các giá trị của Stack k vào các stack riêng biệt,mỗi stack là 1 hàng ma trận
+	   for(int j=0;j<(N-1);j++){	
+		  double v;
+		  Pop(k,v);
+		  NODE *p=KhoiTaoNode(v);
+		  Push(s[i],p);
+		}Reverse(s[i]);
+    }
+}
+
+//Hàm tính đinh thức ma trận vuông cấp N
+double Det(double b[50][50], int N){
+	double a[50][50];
+	for(int i=0;i<N;i++){
+		for(int j=0;j<N;j++){
+			a[i][j]=b[i][j];
+		}
+	}
+	int det=1;
+	for(int i=0;i<N-1;i++){
+		for(int k=i+1;k<N;k++){
+			if(a[k][i]==0) continue;
+			if(a[k][i]!=0){
+				for(int j=0;j<N;j++){
+					a[k][j]=-a[k][j]*(a[i][i]/a[k][i]);
+					a[i][j]=a[i][j]+a[k][j];
+					int t=a[k][j];
+					a[k][i]=-a[i][j];
+					a[i][j]=t;
+				}
+			}
+		}
+	}
+	for(int i=0;i<N;i++) det*=a[i][i];
+	return det;
+}
+//Hàm tìm nghiệm X khi biết AX=B với A là ma trận đọc từ file và B là mảng nhập từ bàn phím
+void Find_X(STACK S[],int N){
+    double A[50][50];
+    double X[50],Y[50],B[50];
+    int i,j;
+	for( i=0;i<N;i++){ //Gán ma tran vừa đọc vào ma trận A(từ A[i][0] đến A[i][N-1] là giá trị của ma trận nhập từ file
+      for(j=0;j<N;j++ ){
+    		double X;
+    		Pop(S[i],X);
+    		A[i][j]=X;
+		}
+	} 
+	if(Det(A,N)==0){
+		printf("Ma tran khong co nghiem duy nhat\n");
+	}
+	else{
+	printf("\nNhap mang B");
+	 for(int i=0;i<N;i++){
+    	printf("\nB[%d]=",i+1);
+    	fflush(stdin);
+    	scanf("%lf",&B[i]);
+	}
+	for(i=0;i<N;i++) A[i][N]=B[i];
+	Print_Matrix(A,N);//Xuất Hệ Phương Trình
+    for(int i=0;i<N;i++) X[i]=0;	//Cho tập nghiệm x ban đầu là 0 hết	 
+	int t;
+	double Sum;
+	for( i=0;i<N;i++) printf(" x[%d]   ",i+1);
+	printf("\n");
+    do{
+	  t=0;
+	  for(i=0;i<N;i++){
+		Sum=0;
+		for(j=0;j<(N+1);j++){
+			if(j!=i) Sum=Sum+A[i][j]*X[j];
+		}
+		Y[i]=(A[i][N]-Sum)/A[i][i];
+		if(abs(Y[i]-X[i])>=0.001) t=1;
+	}
+    for(i=0;i<N;i++){
+	   X[i]=Y[i];
+	   printf("%3.3lf    ",X[i]);
+	   if(i==(N-1)) printf("\n");
+       }
+    }
+    while(t);
+	 for( i=0;i<N;i++){	
+	 	if(i==N) printf("\n");
+	  }
+    }
+	if(Write_File2("D:\RESULT2.OUT.txt",X,N)==0){
+		printf("Loi File Khong Ton Tai\n");
+	}else{
+		printf("Ket Qua  Duoc Luu vao File Thanh Cong\n");
+	}
+}
+
+//Thực Đơn Các Công 
+void Menu(){
+    STACK k;int N;
+    KhoiTaoStack(k);
+    int check = Read_File("D:\DAYSO.IN.txt",k);
+    printf("\n");
+    printf("Nhap N_");
+    scanf("%d",&N);
+    STACK s[N];
+    for(int i=0;i<N;i++) KhoiTaoStack(s[i]);
+    Make_Matrix(s,k,N);
+    if(check=0) printf("Loi Doc File\n");\
+	else{
+	printf("Ma Tran Da Duoc Doc Tu File Thanh Cong\n");	
+    int luachon;
+	while(true){   
+	printf("==========MENU==========\n");
+	printf("0.Thoat Menu\n");
+	printf("1.Hien Thi Ma Tran Ra Man Hinh\n");
+	printf("2.Them 1 phan tu vao moi hang cua ma tran\n");
+	printf("3.Tim Tap Nghiem X cua He Phuong Trinh AX=B\n");
+	printf("Nhap lua chon_");
+	scanf("%d", &luachon);
+	if(luachon==0)	break;
+	else if(luachon==1){
+	    for(int i=0;i<N;i++){
+		   Print_Stack(s[i]);
+		   printf("\n");
+	    }
+	fflush(stdin);
+	system("pause");
+    }else if(luachon==2){
+	    printf("Nhap cac phan tu can them vao ma tran\n");
+	 for(int i=0;i<N;i++){
+		double value;
+		printf("Phan tu thu %d = ",i+1);
+		scanf("%lf",&value);
+		NODE *p=KhoiTaoNode(value);
+		Push(s[i],p);
+	 }
+	 if(Write_File1("D:\RESULT1.OUT.txt",s,N)==0) printf("Loi File Khong Ton Tai");
+	 else{
+	 	printf("Ket Qua Duoc Luu Vao File Thanh Cong\n");
+	 	system("pause");
+	 }
+	 fflush(stdin);
+    }else if(luachon==3){
+    	Find_X(s,N);
+    	system("pause");
+	}else{
+	    printf("Lua chon khong hop le. Vui long nhap lai\n");
+	    system("pause");
+    } 
+    system("cls");
+  }
+ }
+}
 int main(){
-    int rows,columns;
-    //Đếm số hàng và số cột trong file.
-    countRows_ColumnsfromFile("Matrix2.txt",&rows,&columns);
-    printf("So hang la %d\nSo cot la %d\n",rows,columns);
-
-    //Lấy dữ liệu từ file.
-    int list[MAX_LINE_LEN];
-    readfromFile("Matrix2.txt",list,rows,columns);
-
-    //In ma trận ra màn hình.
-    printMatrix(list,rows);
-
-    //Thêm mỗi hàng một phần tử nhập từ bàn phím.
-    double n;
-    printf("Nhap %d phan tu de them vao moi hang: \n",rows);
-    for (int i = 1; i<=rows; i++){
-        // printf("Phan tu thu %d: ",i);
-        // scanf("%lf",&n);
-        n=i;
-        struct Node* head = list[i];
-        sorted_Insert(&head,n);
-        list[i] = head;//cập nhật địa chỉ đầu tiên của hàng.
-    }
-
-    saveMatrixToFile("RESULT1.OUT.txt",list,rows);
-    return 0;
+	Menu();
 }
