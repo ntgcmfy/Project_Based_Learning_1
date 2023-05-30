@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #define MAX 1000
+//Khai Báo Cấu Trúc 1 Node
 struct node{
 	double data;
 	struct node *pNext;
@@ -74,7 +75,7 @@ bool Top(STACK &s, double &x){
 	return true;
 }
 
-//Đảo ngược giá trị của stack
+//Đảo ngược giá trị của 1 Stack
 void Reverse(STACK &s){
 	STACK temp;
 	KhoiTaoStack(temp);
@@ -138,7 +139,7 @@ int Write_File1(char *filename,STACK s[],int N){
     return 1;
 }
 
-//Hàm Ghi File Các nghiệm X của Hệ Phương Trình
+//Hàm Ghi File Các nghiệm X của Sau Khi giải Hệ Phương Trình Băng Phương Pháp Lặp Đơn
 int Write_File2(char *filename,double X[],int N){
 	FILE *fp;
 	fopen_s(&fp,filename,"w");
@@ -152,7 +153,7 @@ int Write_File2(char *filename,double X[],int N){
     return 1;
 }
 
-//Phân loại các giá trị của Stack k vào các stack riêng biệt,mỗi stack là 1 hàng ma trận
+//Phân loại các giá trị của Stack k vào các Stack riêng biệt,mỗi stack là 1 hàng ma trận
 void Make_Matrix(STACK s[],STACK &k,int &N){
 	for(int i=0;i<N;i++){
 	   for(int j=0;j<(N-1);j++){	
@@ -181,6 +182,7 @@ int Read_File(char *filename,STACK &k){
 //Hàm tính định thức ma trận vuông cấp N
 double Det(STACK A[], int N){
     double a[50][50];
+	//Gán Các Giá Trị Của Stack A cho mảng hai chiều 
 	for(int i=0;i<N;i++){
 		for(int j=0;j<N;j++){
 			a[i][j]=Get(A[i],j);
@@ -259,57 +261,57 @@ void Find_X(STACK S[],int N){
 	for( i=0;i<N;i++){ //Gán Stack Đã Đọc Từ File Qua Stack Thay Thế
       A[i]=S[i];
 	} 
-	//Kiểm Tra Điều Kiện Của Hệ Phương Trình
+	//Kiểm Tra Điều Kiện Có Nghiệm Duy Nhất Của Hệ Phương Trình
 	if(Det(A,N)==0){
-		printf("Ma tran khong co nghiem duy nhat\n");
+           printf("Ma tran khong co nghiem duy nhat\n");
 	}
 	else{
-	printf("\nNhap cac gia tri cua mang B");
-	 for(int i=0;i<N;i++){
-    	printf("\nB[%d]=",i);
-    	fflush(stdin);
-    	scanf("%lf",&B[i]);
-    	NODE *p=KhoiTaoNode(B[i]);
-    	PushBack(A[i],p);
-	}
-	printf("\nHe Phuong Trinh Co Dang La Ma Tran\n");
-	Print_Matrix(A,N);//Xuất Hệ Phương Trình
-	printf("\n");
-	//Kiểm Tra Điều Kiện Hội Tụ
-	if(Gauss_Terms(A,N)==0) printf("\nHe Phuong Trinh Khong Thoa Dieu Kien Hoi Tu Cua Phuong Phap Lap Don\n");
-    else{
-	for(int i=0;i<N;i++) X[i]=0;	//Cho tập nghiệm x ban đầu là 0 hết	 
-	int t;
-	double Sum;
-	for( i=0;i<N;i++) printf(" x[%d]    ",i+1);
-	printf("\n");
-    do{
-	  t=0;
-	  for(i=0;i<N;i++){
-		Sum=0;
-		for(j=0;j<(N+1);j++){
-			if(j!=i) Sum=Sum+Get(A[i],j)*X[j];
-		}
-		Y[i]=(Get(A[i],N)-Sum)/Get(A[i],i);
-		if(abs(Y[i]-X[i])>=0.001) t=1;
-	   }
-       for(i=0;i<N;i++){
-	   X[i]=Y[i];
-	   printf("%.3lf    ",X[i]);
-	   if(i==N-1) printf("\n");
-       }
-    }
-    while(t==1);
-	 for( i=0;i<N;i++){	
-	 	if(i==N) printf("\n");
-	  }
-    }
-    }
-	if(Write_File2("D:\RESULT2.OUT.txt",X,N)==0){
-		printf("Loi File Khong Ton Tai\n");
-	  }else{
-	    printf("\nKet Qua  Duoc Luu vao File Thanh Cong\n");
-	  }
+	   printf("\nNhap cac gia tri cua mang B");
+	   for(int i=0;i<N;i++){
+    	      printf("\nB[%d]=",i);
+    	      fflush(stdin);
+    	      scanf("%lf",&B[i]);
+    	      NODE *p=KhoiTaoNode(B[i]);
+    	      PushBack(A[i],p);
+	    }
+	   printf("\nHe Phuong Trinh Co Dang La Ma Tran\n");
+	   Print_Matrix(A,N);//Xuất Hệ Phương Trình
+	   printf("\n");
+	   //Kiểm Tra Điều Kiện Hội Tụ
+	   if(Gauss_Terms(A,N)==0) printf("\nHe Phuong Trinh Khong Thoa Dieu Kien Hoi Tu Cua Phuong Phap Lap Don\n");
+           else{
+	        for(int i=0;i<N;i++) X[i]=0;	//Cho tập nghiệm x ban đầu là 0 hết	 
+	        int t;
+	        double Sum;
+	        for( i=0;i<N;i++) printf(" x[%d]    ",i+1);
+	         printf("\n");
+                do{
+	           t=0;
+	           for(i=0;i<N;i++){
+		   Sum=0;
+		   for(j=0;j<(N+1);j++){
+		       if(j!=i) Sum=Sum+Get(A[i],j)*X[j];
+		   }
+		   Y[i]=(Get(A[i],N)-Sum)/Get(A[i],i);
+		   if(abs(Y[i]-X[i])>=0.001) t=1;
+	           }
+                 for(i=0;i<N;i++){
+	         X[i]=Y[i];
+	         printf("%.3lf    ",X[i]);
+	         if(i==N-1) printf("\n");
+                 }
+           }
+     while(t==1);
+     for( i=0;i<N;i++){	
+	if(i==N) printf("\n");
+     }
+   }
+ }
+if(Write_File2("D:\RESULT2.OUT.txt",X,N)==0){
+	printf("Loi File Khong Ton Tai\n");
+ }else{
+	printf("\nKet Qua  Duoc Luu vao File Thanh Cong\n");
+  }
 }
 
 void Menu(){
