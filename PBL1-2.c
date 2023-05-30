@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 #define MAX 1000
-//Khai Báo 1 cái Node
 struct node{
 	double data;
 	struct node *pNext;
@@ -26,7 +25,7 @@ void KhoiTaoStack(STACK &s){
 	s.pTop=NULL;
 }
 
-// Khởi tạo 1 node
+// Hàm khởi tạo 1 node
 NODE *KhoiTaoNode(double x){
      NODE *p=new NODE;
      p->data=x;
@@ -66,7 +65,7 @@ bool Pop(STACK &s, double &x ){
 	return true;
 }
 
-//xem thông tin phần tử đầu Stack và không mất giá trị
+//xem thông tin phần tử đầu danh sách thôi
 bool Top(STACK &s, double &x){
 	if(IsEmpty(s)==true) return false;
 	else{
@@ -86,13 +85,39 @@ void Reverse(STACK &s){
 	s=temp;
 }
 
+//Thêm 1 phần tử vào cuối
+void PushBack(STACK &s, NODE *p){
+	Reverse(s);
+	Push(s,p);
+	Reverse(s);
+}
+
+//Hàm truy đến giá trị của 1 node trong Stack
+double Get(STACK &s, int index){
+	int x=0;
+    NODE *k=s.pTop;
+    while(x!=index){
+    	k=k->pNext;
+    	x++;
+	}
+	return k->data;
+}
 //Hàm Xuất 1 Dòng Ứng Với 1 Stack
 void Print_Stack(STACK &s){
 	for(NODE *k=s.pTop;k!=NULL;k=k->pNext){
-		printf("%.2lf ",k->data);
+		printf("%.3lf  ",k->data);
 	}
 }
 
+// Hàm Xuất Ma Trận 
+void Print_Matrix(STACK s[], int N){
+	for(int i=0;i<N;i++){
+		for(int j=0;j<=N;j++){
+			printf("%3.3lf  ",Get(s[i],j));
+			if(j==N) printf("\n");
+		}
+	}
+}
 //Hàm ghi File Ma Trận Sau Khi Thêm Mỗi Hàng 1 phần tử
 int Write_File1(char *filename,STACK s[],int N){
 	FILE *fp;
@@ -124,17 +149,18 @@ else{
   fclose(fp);
   return 1;
 }
-// Hàm Xuất Ma Trận Mảng Hai Chiều
-void Print_Matrix(double a[][50], int N){
-	for(int i=0;i<N;i++){
-		for(int j=0;j<=N;j++){
-			printf("%3.3lf  ",a[i][j]);
-			if(j==N) printf("\n");
-		}
-	}
-}
 
-//Hàm Đọc Các Giá Trị Từ File Vào 1 Stack
+void Make_Matrix(STACK s[],STACK &k,int &N){
+	for(int i=0;i<N;i++){//Phân loại các giá trị của Stack k vào các stack riêng biệt,mỗi stack là 1 hàng ma trận
+	   for(int j=0;j<(N-1);j++){	
+		  double v;
+		  Pop(k,v);
+		  NODE *p=KhoiTaoNode(v);
+		  Push(s[i],p);
+		}Reverse(s[i]);
+    }
+}
+//Hàm Đọc Ma Trận Từ File
 int Read_File(char *filename,STACK &k){
     FILE *fp=NULL;
     double x;
@@ -148,24 +174,12 @@ int Read_File(char *filename,STACK &k){
    return 1;
 }
 
-//Hàm Ghi lại Các Giá trị Đọc Được vào Các Stack với mỗi Stack là một Ma Trận 
-void Make_Matrix(STACK s[],STACK &k,int &N){
-	for(int i=0;i<N;i++){   //Phân loại các giá trị của Stack k vào các stack riêng biệt,mỗi stack là 1 hàng ma trận
-	   for(int j=0;j<(N-1);j++){	
-		  double v;
-		  Pop(k,v);
-		  NODE *p=KhoiTaoNode(v);
-		  Push(s[i],p);
-		}Reverse(s[i]);
-    }
-}
-
 //Hàm tính đinh thức ma trận vuông cấp N
-double Det(double b[50][50], int N){
-	double a[50][50];
+double Det(STACK A[], int N){
+    double a[50][50];
 	for(int i=0;i<N;i++){
 		for(int j=0;j<N;j++){
-			a[i][j]=b[i][j];
+			a[i][j]=Get(A[i],j);
 		}
 	}
 	int det=1;
@@ -186,29 +200,29 @@ double Det(double b[50][50], int N){
 	for(int i=0;i<N;i++) det*=a[i][i];
 	return det;
 }
+
 //Hàm tìm nghiệm X khi biết AX=B với A là ma trận đọc từ file và B là mảng nhập từ bàn phím
 void Find_X(STACK S[],int N){
-    double A[50][50];
-    double X[50],Y[50],B[50];
+    STACK A[N];
+    double X[N],Y[N],B[N];
     int i,j;
+    int i_max=0;
+    for(i=0;i<N;i++) KhoiTaoStack(A[i]);
 	for( i=0;i<N;i++){ //Gán ma tran vừa đọc vào ma trận A(từ A[i][0] đến A[i][N-1] là giá trị của ma trận nhập từ file
-      for(j=0;j<N;j++ ){
-    		double X;
-    		Pop(S[i],X);
-    		A[i][j]=X;
-		}
+      A[i]=S[i];
 	} 
 	if(Det(A,N)==0){
 		printf("Ma tran khong co nghiem duy nhat\n");
 	}
 	else{
-	printf("\nNhap mang B");
+	printf("\nNhap cac gia tri cua mang B");
 	 for(int i=0;i<N;i++){
-    	printf("\nB[%d]=",i+1);
+    	printf("\nB[%d]=",i);
     	fflush(stdin);
     	scanf("%lf",&B[i]);
+    	NODE *p=KhoiTaoNode(B[i]);
+    	PushBack(A[i],p);
 	}
-	for(i=0;i<N;i++) A[i][N]=B[i];
 	Print_Matrix(A,N);//Xuất Hệ Phương Trình
     for(int i=0;i<N;i++) X[i]=0;	//Cho tập nghiệm x ban đầu là 0 hết	 
 	int t;
@@ -220,30 +234,33 @@ void Find_X(STACK S[],int N){
 	  for(i=0;i<N;i++){
 		Sum=0;
 		for(j=0;j<(N+1);j++){
-			if(j!=i) Sum=Sum+A[i][j]*X[j];
+			if(j!=i) Sum=Sum+Get(A[i],j)*X[j];
 		}
-		Y[i]=(A[i][N]-Sum)/A[i][i];
+		Y[i]=(Get(A[i],N)-Sum)/Get(A[i],i);
 		if(abs(Y[i]-X[i])>=0.001) t=1;
-	}
-    for(i=0;i<N;i++){
+	   }
+       for(i=0;i<N;i++){
 	   X[i]=Y[i];
 	   printf("%3.3lf    ",X[i]);
 	   if(i==(N-1)) printf("\n");
        }
+       	i_max++;
     }
-    while(t);
+    while(t==1&&i_max<20);
 	 for( i=0;i<N;i++){	
 	 	if(i==N) printf("\n");
 	  }
     }
-	if(Write_File2("D:\RESULT2.OUT.txt",X,N)==0){
+    if(i_max==20) printf("Qua Trinh Lap Khong Hoi Tu Den Nghiem\n");
+	else {
+	   if(Write_File2("D:\RESULT2.OUT.txt",X,N)==0){
 		printf("Loi File Khong Ton Tai\n");
-	}else{
-		printf("Ket Qua  Duoc Luu vao File Thanh Cong\n");
-	}
+	  }else{
+	    printf("Ket Qua  Duoc Luu vao File Thanh Cong\n");
+	  }
+    }
 }
 
-//Thực Đơn Các Công 
 void Menu(){
     STACK k;int N;
     KhoiTaoStack(k);
