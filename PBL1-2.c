@@ -205,16 +205,61 @@ double Det(STACK A[], int N){
 	return det;
 }
 
+//Hàm Kiểm Tra Điều Kiện Hội Tụ Của Quá Trình Lặp
+ int Gauss_Terms(STACK A[], int N){
+ 	double r1[N],r2[N];
+ 	double max1,max2,max3;
+ 	double B[10][10];
+ 	for(int i=0;i<N;i++){
+ 		for(int j=0;j<N;j++){
+ 			if(i==j) B[i][j]=0;
+ 			else{
+ 				B[i][j]=Get(A[i],j)/Get(A[i],i);
+			 }
+		 }
+	 }
+	  	max1=0;
+	 for(int i=0;i<N;i++){
+	 	r1[i]=0;
+	 	for(int j=0;j<N;j++){
+	 	r1[i]+=abs(B[i][j]);	
+		 }
+		 if(max1<r1[i] ) max1=r1[i];
+	 }
+	 max2=0;
+	 for(int j=0;j<N;j++){
+	 	r2[j]=0;
+	 	for(int i=0;i<N;i++){
+	 		r2[j]+=abs(B[i][j]);
+		 }
+		if(max2<r2[j]) max2=r2[j]; 
+	 }
+	 max3=0;
+	 for(int i=0;i<N;i++){
+	 	for(int j=0;j<N;j++){
+	 		max3+=B[i][j]*B[i][j];
+		 }
+	 }
+	 for(int i=0;i<N;i++){
+	 	for(int j=0;j<N;j++){
+	 		printf("%.3lf   ",B[i][j]);
+		 }
+		 printf("\n");
+	 }
+	 if(max1<1||max2<1||max3<1) return 1;
+	 else return 0;
+ }
+ 
 //Hàm tìm nghiệm X khi biết AX=B với A là ma trận đọc từ file và B là mảng nhập từ bàn phím
 void Find_X(STACK S[],int N){
-    STACK A[N];
+    STACK A[N];//Sử Dụng 1 Stack Thay Thế
     double X[N],Y[N],B[N];
     int i,j;
-    int i_max=0;
     for(i=0;i<N;i++) KhoiTaoStack(A[i]);
-	for( i=0;i<N;i++){ //Gán ma tran vừa đọc vào ma trận A(từ A[i][0] đến A[i][N-1] là giá trị của ma trận nhập từ file
+	for( i=0;i<N;i++){ //Gán Stack Đã Đọc Từ File Qua Stack Thay Thế
       A[i]=S[i];
 	} 
+	//Kiểm Tra Điều Kiện Của Hệ Phương Trình
 	if(Det(A,N)==0){
 		printf("Ma tran khong co nghiem duy nhat\n");
 	}
@@ -230,7 +275,10 @@ void Find_X(STACK S[],int N){
 	printf("\nHe Phuong Trinh Co Dang La Ma Tran\n");
 	Print_Matrix(A,N);//Xuất Hệ Phương Trình
 	printf("\n");
-    for(int i=0;i<N;i++) X[i]=0;	//Cho tập nghiệm x ban đầu là 0 hết	 
+	//Kiểm Tra Điều Kiện Hội Tụ
+	if(Gauss_Terms(A,N)==0) printf("\nHe Phuong Trinh Khong Thoa Dieu Kien Hoi Tu Cua Phuong Phap Lap Don\n");
+    else{
+	for(int i=0;i<N;i++) X[i]=0;	//Cho tập nghiệm x ban đầu là 0 hết	 
 	int t;
 	double Sum;
 	for( i=0;i<N;i++) printf(" x[%d]    ",i+1);
@@ -250,21 +298,18 @@ void Find_X(STACK S[],int N){
 	   printf("%.3lf    ",X[i]);
 	   if(i==N-1) printf("\n");
        }
-       	i_max++;
     }
-    while(t==1&&i_max<100);
+    while(t==1);
 	 for( i=0;i<N;i++){	
 	 	if(i==N) printf("\n");
 	  }
     }
-    if(i_max==100) printf("Qua Trinh Lap Khong Hoi Tu Den Nghiem\n");
-	else {
-	   if(Write_File2("D:\RESULT2.OUT.txt",X,N)==0){
+    }
+	if(Write_File2("D:\RESULT2.OUT.txt",X,N)==0){
 		printf("Loi File Khong Ton Tai\n");
 	  }else{
 	    printf("\nKet Qua  Duoc Luu vao File Thanh Cong\n");
 	  }
-    }
 }
 
 void Menu(){
