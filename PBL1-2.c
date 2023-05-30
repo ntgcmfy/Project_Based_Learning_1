@@ -102,6 +102,7 @@ double Get(STACK &s, int index){
 	}
 	return k->data;
 }
+
 //Hàm Xuất 1 Dòng Ứng Với 1 Stack
 void Print_Stack(STACK &s){
 	for(NODE *k=s.pTop;k!=NULL;k=k->pNext){
@@ -118,6 +119,7 @@ void Print_Matrix(STACK s[], int N){
 		}
 	}
 }
+
 //Hàm ghi File Ma Trận Sau Khi Thêm Mỗi Hàng 1 phần tử
 int Write_File1(char *filename,STACK s[],int N){
 	FILE *fp;
@@ -141,17 +143,18 @@ int Write_File2(char *filename,double X[],int N){
 	FILE *fp;
 	fopen_s(&fp,filename,"w");
 	if(fp==NULL) return 0;
-else{
-	for(int i=0;i<N;i++){
+    else{
+	   for(int i=0;i<N;i++){
 		fprintf(fp,"X%d=%.3lf\n",i+1,X[i]);
-	}
-  }
-  fclose(fp);
-  return 1;
+	   }
+    }
+     fclose(fp);
+    return 1;
 }
 
+//Phân loại các giá trị của Stack k vào các stack riêng biệt,mỗi stack là 1 hàng ma trận
 void Make_Matrix(STACK s[],STACK &k,int &N){
-	for(int i=0;i<N;i++){//Phân loại các giá trị của Stack k vào các stack riêng biệt,mỗi stack là 1 hàng ma trận
+	for(int i=0;i<N;i++){
 	   for(int j=0;j<(N-1);j++){	
 		  double v;
 		  Pop(k,v);
@@ -160,6 +163,7 @@ void Make_Matrix(STACK s[],STACK &k,int &N){
 		}Reverse(s[i]);
     }
 }
+
 //Hàm Đọc Ma Trận Từ File
 int Read_File(char *filename,STACK &k){
     FILE *fp=NULL;
@@ -174,7 +178,7 @@ int Read_File(char *filename,STACK &k){
    return 1;
 }
 
-//Hàm tính đinh thức ma trận vuông cấp N
+//Hàm tính định thức ma trận vuông cấp N
 double Det(STACK A[], int N){
     double a[50][50];
 	for(int i=0;i<N;i++){
@@ -223,11 +227,13 @@ void Find_X(STACK S[],int N){
     	NODE *p=KhoiTaoNode(B[i]);
     	PushBack(A[i],p);
 	}
+	printf("\nHe Phuong Trinh Co Dang La Ma Tran\n");
 	Print_Matrix(A,N);//Xuất Hệ Phương Trình
+	printf("\n");
     for(int i=0;i<N;i++) X[i]=0;	//Cho tập nghiệm x ban đầu là 0 hết	 
 	int t;
 	double Sum;
-	for( i=0;i<N;i++) printf(" x[%d]   ",i+1);
+	for( i=0;i<N;i++) printf(" x[%d]    ",i+1);
 	printf("\n");
     do{
 	  t=0;
@@ -241,33 +247,37 @@ void Find_X(STACK S[],int N){
 	   }
        for(i=0;i<N;i++){
 	   X[i]=Y[i];
-	   printf("%3.3lf    ",X[i]);
-	   if(i==(N-1)) printf("\n");
+	   printf("%.3lf    ",X[i]);
+	   if(i==N-1) printf("\n");
        }
        	i_max++;
     }
-    while(t==1&&i_max<20);
+    while(t==1&&i_max<100);
 	 for( i=0;i<N;i++){	
 	 	if(i==N) printf("\n");
 	  }
     }
-    if(i_max==20) printf("Qua Trinh Lap Khong Hoi Tu Den Nghiem\n");
+    if(i_max==100) printf("Qua Trinh Lap Khong Hoi Tu Den Nghiem\n");
 	else {
 	   if(Write_File2("D:\RESULT2.OUT.txt",X,N)==0){
 		printf("Loi File Khong Ton Tai\n");
 	  }else{
-	    printf("Ket Qua  Duoc Luu vao File Thanh Cong\n");
+	    printf("\nKet Qua  Duoc Luu vao File Thanh Cong\n");
 	  }
     }
 }
 
 void Menu(){
-    STACK k;int N;
+    STACK k;
+	int N;
     KhoiTaoStack(k);
     int check = Read_File("D:\DAYSO.IN.txt",k);
-    printf("\n");
-    printf("Nhap N_");
-    scanf("%d",&N);
+    do{
+      printf("Doc Vao N DSLK tu File voi N>=5, moi hang la 1 DSLK\n");
+  	  printf("Nhap Gia Tri Cua N_");
+  	  scanf("%d",&N);
+  	  if(N<5) system("cls");
+    } while(N<5);
     STACK s[N];
     for(int i=0;i<N;i++) KhoiTaoStack(s[i]);
     Make_Matrix(s,k,N);
@@ -302,7 +312,7 @@ void Menu(){
 	 }
 	 if(Write_File1("D:\RESULT1.OUT.txt",s,N)==0) printf("Loi File Khong Ton Tai");
 	 else{
-	 	printf("Ket Qua Duoc Luu Vao File Thanh Cong\n");
+	 	printf("\nKet Qua Duoc Luu Vao File Thanh Cong\n");
 	 	system("pause");
 	 }
 	 fflush(stdin);
