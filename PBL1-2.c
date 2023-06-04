@@ -181,7 +181,7 @@ int Read_File(char *filename,STACK &k){
 
 //Hàm tính định thức ma trận vuông cấp N
 double Det(STACK A[], int N){
-    double a[50][50];
+	double a[50][50];
 	//Gán Các Giá Trị Của Stack A cho mảng hai chiều 
 	for(int i=0;i<N;i++){
 		for(int j=0;j<N;j++){
@@ -254,12 +254,12 @@ double Det(STACK A[], int N){
  
 //Hàm tìm nghiệm X khi biết AX=B với A là ma trận đọc từ file và B là mảng nhập từ bàn phím
 void Find_X(STACK S[],int N){
-    STACK A[N];//Sử Dụng 1 Stack Thay Thế
-    double X[N],Y[N],B[N];
-    int i,j;
-    for(i=0;i<N;i++) KhoiTaoStack(A[i]);
+	STACK A[N];//Sử Dụng 1 Stack Thay Thế
+	double X[N],Y[N],B[N];
+	int i,j;
+	for(i=0;i<N;i++) KhoiTaoStack(A[i]);
 	for( i=0;i<N;i++){ //Gán Stack Đã Đọc Từ File Qua Stack Thay Thế
-      A[i]=S[i];
+		A[i]=S[i];
 	} 
 	//Kiểm Tra Điều Kiện Có Nghiệm Duy Nhất Của Hệ Phương Trình
 	if(Det(A,N)==0){
