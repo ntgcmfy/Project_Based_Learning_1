@@ -464,7 +464,7 @@ void Find_X(STACK S[], int N){
 	    }
 	    Box(1,21,56,7,1,1," ");
 	    SetColor(6);
-	    gotoxy(2,22); printf("Nhan phim UP / DOWN va ENTER de tiep tuc cac lua chon");
+	    gotoxy(2,23); printf("Nhan phim UP / DOWN va ENTER de tiep tuc cac lua chon");
 	    gotoxy(2,24);
     }
 }
