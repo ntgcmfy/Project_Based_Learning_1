@@ -452,6 +452,7 @@ void Find_X(STACK S[], int N){
 			    printf("%.3lf", X[i]);  
 		    }
         }
+	    Box(1,21,56,7,1,1," ");
 	    if(Write_File2("D:\RESULT2.OUT.txt", X, N) == 0){
 		    Box(1,21,56,7,1,1," ");
 		    SetColor(4);
@@ -462,7 +463,6 @@ void Find_X(STACK S[], int N){
 		    SetColor(10);
 		    gotoxy(2,22); printf("Ket qua  duoc luu vao File D:\RESULT2.OUT.txt thanh cong");
 	    }
-	    Box(1,21,56,7,1,1," ");
 	    SetColor(6);
 	    gotoxy(2,23); printf("Nhan phim UP / DOWN va ENTER de tiep tuc cac lua chon");
 	    gotoxy(2,24);
