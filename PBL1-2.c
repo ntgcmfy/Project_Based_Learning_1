@@ -399,8 +399,7 @@ void Find_X(STACK S[], int N){
 	    system("cls");
 	    Interface();
 	    SetColor(7);
-	    gotoxy(4,11);printf("%d",N);
-	    gotoxy(18,9); printf("4");
+	    gotoxy(18,9); printf("%d",N);
 	    Box(63,1,50,2,5,7,"He Phuong Trinh Co Dang Ma Tran");
 	    gotoxy(88,3);printf("%c",char(203));
 	    Box(61,4,56,N+1,2,1," ");
@@ -420,14 +419,14 @@ void Find_X(STACK S[], int N){
 	        for( i = 0; i < N; i++) X[i] = 0;	//Cho tập nghiệm x ban đầu là 0 hết	 
 	        int t;
 	        double Sum;
-	        Box(63,11,40,2,3,7,"Tap nghiem cua he phuong trinh");
+	         Box(63,6+N,40,2,3,7,"Tap nghiem cua he phuong trinh");
 	        for( i = 1; i <= N; i++){
 	        	if(i==1) SetColor(3);
 	        	else SetColor(4);
-	        	gotoxy(75,10+3*i); printf("%c",char(203));
+	        	gotoxy(75,5+N+3*i); printf("%c",char(203));
 	            Box(68,N+6+3*i,20,2,4,7," ");
 	         	SetColor(4);
-	        	gotoxy(75,11+3*i); printf("%c",char(202));
+	        	gotoxy(75,6+N+3*i); printf("%c",char(202));
 	            SetColor(7);
 	            gotoxy(69,N+7+3*i);printf(" X %d = ", i); 
 		    }
@@ -440,10 +439,8 @@ void Find_X(STACK S[], int N){
 		            }
 		            Y[i] = (Get(A[i],N) - Sum) / Get(A[i], i);
 		            if(abs(Y[i] - X[i]) >= 0.001) t = 1;
-	            }
-                for( i = 0; i < N; i++){
-	                X[i] = Y[i];
-                }
+	                    X[i] = Y[i];
+                     }
             }
             while(t == 1);
             for( i = 0; i < N; i++){
