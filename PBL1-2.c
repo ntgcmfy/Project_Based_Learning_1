@@ -160,22 +160,6 @@ void Box(int x, int y, int w, int h, int t, int b, char *nd){
 	gotoxy(x + w, y +h);printf("%c", char(188)); 
 }
 
-//Hàm Tạo n Hình Chữ Nhật Chứa Nội Dung Của Menu
-void n_Box(int x, int y, int w, int h, int t, int b){
-	char *nd;
-	SetColor(7);
-	for(int i = 0;i < 5; i++){
-	if(i == 0) nd = "   THOAT CHUONG TRINH";
-	else if(i == 1) nd = "   HIEN THI MA TRAN";
-	else if(i == 2) {
-	nd = "   THEM 1 COT PHAN TU";
-    }
-	else if(i == 4) nd = "   TIM NGHIEM X";
-	else nd = "   XOA 1 COT PHAN TU"; 	
-	Box(x, y + (i * 4), w, h, t, b, nd);
-    }
-}
-
 //Hàm In Ma Trân
 void Print_Matrix(STACK s[], int N, int y){
 	int v;
@@ -225,19 +209,19 @@ int Write_File2(char *filename,double X[],int N){
 //Hàm Đọc Ma Trận Từ File
 int Read_File(char *filename, STACK s[], int N){
 	STACK k;
-	int dem = 1;
+	int dem = 0;
 	KhoiTaoStack(k);
     FILE *fp = NULL;
     double x;
     fopen_s(&fp,filename,"r");
      if(fp == NULL) return 0;
    else{ while( fscanf( fp , "%lf " , &x) != EOF){//Đọc Hết Các Giá Trị trong File vào Stack k
-	NODE *p = KhoiTaoNode(x);
+	   NODE *p = KhoiTaoNode(x);
 	   Push( k , p );
 	   dem++;
 	  }Reverse(k);//Hoán đổi ngược lại các vị trí
     }fclose( fp );
-    if(dem!=N*(N-1)) return 2;
+    if(dem != N*(N-1)) return 2;
     for(int i = 0; i < N; i++){
 	   for(int j = 0; j < (N-1); j++){	
 		  double v;
@@ -333,7 +317,6 @@ void Interface(){
 	Box(0,0,58,29,1,1," ");
 	Box(1,21,56,7,1,1," ");
 	Box(60,0,58,29 ,7,1," ");
-	n_Box(25,1,30,3,9,7);
 	Box(10,7,10,3,11,7," NHAP N ");
 	SetColor(7);
 	gotoxy(12,9); printf(" N =");
@@ -342,6 +325,12 @@ void Interface(){
 	gotoxy(2,7); printf(" E");
 	gotoxy(2,9);printf(" N");
 	gotoxy(2,11);printf(" U");
+	char *nd;
+	Box(25, 1, 30, 3, 9, 7, "   THOAT CHUONG TRINH");
+	Box(25, 5, 30, 3, 9, 7, "   HIEN THI MA TRAN");
+    Box(25, 9, 30, 3, 9, 7, "   THEM 1 COT PHAN TU");
+    Box(25, 13, 30, 3, 9, 7, "   XOA 1 COT PHAN TU");
+    Box(25, 17, 30, 3, 9, 7, "   TIM NGHIEM X");
 	SetColor(6);
 	gotoxy(8,8); printf("%c%c",char(205),char(205));
 	gotoxy(8,9); printf("%c%c",char(205),char(205));
@@ -365,7 +354,7 @@ void Find_X(STACK S[], int N){
     STACK A[N]; //Sử Dụng 1 Stack Thay Thế
     double X[N], Y[N], B[N];
     int i, j;
-    int yp=18;
+    int yp = 18;
 	for( i = 0; i < N; i++){ //Gán Stack Đã Đọc Từ File Qua Stack Thay Thế
 	  KhoiTaoStack(A[i]);
 	  A[i] = S[i];
@@ -465,12 +454,12 @@ void Find_X(STACK S[], int N){
 	        }
 	        Box(95,18,20,2,6,4,"    Xem Qua Trinh");
 	        Box(95,21,20,2,6,7,"      Bo Qua");
-	        SetColor(6);
-	        gotoxy(105,20); printf("%c",char(203));
-	        gotoxy(105,21);printf("%c",char(202));
 	        bool kt = true;
 	        while(kt){
 	        	ShowCur(0);
+	        	SetColor(6);
+	            gotoxy(105,20); printf("%c",char(203));
+	            gotoxy(105,21);printf("%c",char(202));
 	    	    if(kbhit()){
 	        		char c = getch();
 	        		if(c == -32){
@@ -507,8 +496,9 @@ void Find_X(STACK S[], int N){
 		                    Y[i] = (Get(A[i],N) - Sum) / Get(A[i], i);
 		                    if(abs(Y[i] - X[i]) >= 0.001) t = 1;
 	                        X[i] = Y[i];
-	                        gotoxy(64+9*i,k); printf("%.3lf",X[i]);
-                        } k++;
+						    gotoxy(64+9*i,k); printf("%.3lf",X[i]);
+ 					    } 
+ 					    k++;
                     }
                     while(t == 1);
 		    }
@@ -541,9 +531,9 @@ void Menu(){
       }
 	} while(N < 5);
     STACK s[N];
-    int check = Read_File("D:\DAYSO.IN.txt", s, N);
     for(int i = 0; i < N; i++) KhoiTaoStack(s[i]);
-    if(  check == 0){
+    int check = Read_File("D:\DAYSO.IN.txt", s, N);
+    if( check == 0){
 	   Box(1,21,56,7,1,1," ");
 	   gotoxy(2,22); 
 	   SetColor(4);
@@ -551,8 +541,7 @@ void Menu(){
 	   gotoxy(2,23);
 	   system("pause");
     }
-    else if(check == 2)
-    {
+    else if(check == 2){
        Box(1,21,56,7,1,1," ");
 	   gotoxy(2,22); 
 	   SetColor(4);
@@ -560,7 +549,7 @@ void Menu(){
 	   gotoxy(2,23);
 	   system("pause");
 	}
-	else{	
+	else if( check == 1){	
 	   Box(1,21,56,7,1,1," ");
 	   SetColor(10);
 	   gotoxy(2,22);printf("Ma tran doc tu File thanh cong");
@@ -570,11 +559,13 @@ void Menu(){
 	   gotoxy(17,9);printf("%d",N);
 	   while(true){
 	       ShowCur(0);
-	       int e = 0;
 	       int yp = y;
 	       int ycu = yp;
-	       n_Box(25,1,30,3,9,7);
            char *nd ="   THOAT CHUONG TRINH";
+           Box(25, 5, 30, 3, 9, 7, "   HIEN THI MA TRAN");
+           Box(25, 9, 30, 3, 9, 7, "   THEM 1 COT PHAN TU");
+           Box(25, 13, 30, 3, 9, 7, "   XOA 1 COT PHAN TU");
+           Box(25, 17, 30, 3, 9, 7, "   TIM NGHIEM X");
            bool kt = true;
            while(true){
     	       if(kt == true){
@@ -586,7 +577,7 @@ void Menu(){
     	       else if(yp == 17) nd ="   TIM NGHIEM X";
     	       else if(yp == 1) nd ="   THOAT CHUONG TRINH";
     	       Box(x,yp,30,3,6,10,nd);
-    	       kt=false;
+    	       kt = false;
                }   
     	       if(kbhit()){
     		       char c = getch();
@@ -631,7 +622,6 @@ void Menu(){
 	            gotoxy(2,22);
 	            printf("Nhan phim UP / DOWN va ENTER de tiep tuc cac lua chon");
 	            gotoxy(2,23);
-	            fflush(stdin);
 	            system("pause");
             }
             else if(yp == 9) {
