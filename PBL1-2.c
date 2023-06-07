@@ -225,6 +225,7 @@ int Write_File2(char *filename,double X[],int N){
 //Hàm Đọc Ma Trận Từ File
 int Read_File(char *filename, STACK s[], int N){
 	STACK k;
+	int dem = 1;
 	KhoiTaoStack(k);
     FILE *fp = NULL;
     double x;
@@ -233,8 +234,10 @@ int Read_File(char *filename, STACK s[], int N){
    else{ while( fscanf( fp , "%lf " , &x) != EOF){//Đọc Hết Các Giá Trị trong File vào Stack k
 	NODE *p = KhoiTaoNode(x);
 	   Push( k , p );
+	   dem++;
 	  }Reverse(k);//Hoán đổi ngược lại các vị trí
     }fclose( fp );
+    if(dem!=N*(N-1)) return 2;
     for(int i = 0; i < N; i++){
 	   for(int j = 0; j < (N-1); j++){	
 		  double v;
@@ -538,15 +541,25 @@ void Menu(){
       }
 	} while(N < 5);
     STACK s[N];
+    int check = Read_File("D:\DAYSO.IN.txt", s, N);
     for(int i = 0; i < N; i++) KhoiTaoStack(s[i]);
-    if( Read_File("D:\DAYSO.IN.txt", s, N) == 0){
+    if(  check == 0){
 	   Box(1,21,56,7,1,1," ");
 	   gotoxy(2,22); 
 	   SetColor(4);
 	   printf("ERROR: Loi file D:\DAYSO.IN.txt");
-	   gotoxy(2,29);
+	   gotoxy(2,23);
 	   system("pause");
     }
+    else if(check == 2)
+    {
+       Box(1,21,56,7,1,1," ");
+	   gotoxy(2,22); 
+	   SetColor(4);
+	   printf("ERROR:So Phan Tu Trong File D:\DAYSO.IN.txt Khong Hop Le");
+	   gotoxy(2,23);
+	   system("pause");
+	}
 	else{	
 	   Box(1,21,56,7,1,1," ");
 	   SetColor(10);
