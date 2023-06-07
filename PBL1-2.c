@@ -329,7 +329,7 @@ int Gauss_Terms(STACK A[], int N){
 void Interface(){
 	Box(0,0,58,29,1,1," ");
 	Box(1,21,56,7,1,1," ");
-	Box(60,0,58,29,7,1," ");
+	Box(60,0,58,29 ,7,1," ");
 	n_Box(25,1,30,3,9,7);
 	Box(10,7,10,3,11,7," NHAP N ");
 	SetColor(7);
@@ -362,6 +362,7 @@ void Find_X(STACK S[], int N){
     STACK A[N]; //Sử Dụng 1 Stack Thay Thế
     double X[N], Y[N], B[N];
     int i, j;
+    int yp=18;
 	for( i = 0; i < N; i++){ //Gán Stack Đã Đọc Từ File Qua Stack Thay Thế
 	  KhoiTaoStack(A[i]);
 	  A[i] = S[i];
@@ -396,10 +397,10 @@ void Find_X(STACK S[], int N){
     	    NODE *p = KhoiTaoNode(B[i-1]);
     	    PushBack(A[i-1],p);
 	    }
-	    system("cls");
-	    Interface();
+	    Box(60,0,58,29 + (N-5)*5 ,7,1," ");
 	    SetColor(7);
-	    gotoxy(18,9); printf("%d",N);
+	    gotoxy(4,11);printf("%d",N);
+	    gotoxy(18,9); printf("4");
 	    Box(63,1,50,2,5,7,"He Phuong Trinh Co Dang Ma Tran");
 	    gotoxy(88,3);printf("%c",char(203));
 	    Box(61,4,56,N+1,2,1," ");
@@ -419,7 +420,7 @@ void Find_X(STACK S[], int N){
 	        for( i = 0; i < N; i++) X[i] = 0;	//Cho tập nghiệm x ban đầu là 0 hết	 
 	        int t;
 	        double Sum;
-	         Box(63,6+N,40,2,3,7,"Tap nghiem cua he phuong trinh");
+	        Box(63,6+N,40,2,3,7,"Tap nghiem cua he phuong trinh");
 	        for( i = 1; i <= N; i++){
 	        	if(i==1) SetColor(3);
 	        	else SetColor(4);
@@ -439,36 +440,84 @@ void Find_X(STACK S[], int N){
 		            }
 		            Y[i] = (Get(A[i],N) - Sum) / Get(A[i], i);
 		            if(abs(Y[i] - X[i]) >= 0.001) t = 1;
-	                    X[i] = Y[i];
-                     }
+	                X[i] = Y[i];
+                } 
             }
             while(t == 1);
             for( i = 0; i < N; i++){
 	            gotoxy(77,N+10+3*i);
 	            SetColor(7);
 			    printf("%.3lf", X[i]);  
+            }
+	        Box(1,21,56,7,1,1," ");
+	        if(Write_File2("D:\RESULT2.OUT.txt", X, N) == 0){
+		        Box(1,21,56,7,1,1," ");
+		        SetColor(4);
+		        gotoxy(2,22); printf("Error: Khong ton tai File D:\RESULT2.OUT.txt");
+	        } 
+		    else {
+		        Box(1,21,56,7,1,1," ");
+		        SetColor(10);
+		        gotoxy(2,22); printf("Ket qua  duoc luu vao File D:\RESULT2.OUT.txt thanh cong");
+	        }
+	        Box(95,18,20,2,6,4,"    Xem Qua Trinh");
+	        Box(95,21,20,2,6,7,"      Bo Qua");
+	        SetColor(6);
+	        gotoxy(105,20); printf("%c",char(203));
+	        gotoxy(105,21);printf("%c",char(202));
+	        bool kt = true;
+	        while(kt){
+	        	ShowCur(0);
+	    	    if(kbhit()){
+	        		char c = getch();
+	        		if(c == -32){
+	    	    		c = getch();
+	    			    if(c == 80 && yp == 18) {
+	    				    yp += 3;
+					     	Box(95,18,20,2,6,7,"    Xem Qua Trinh");
+	                        Box(95,21,20,2,6,4,"      Bo Qua");
+				        }
+					    if(c == 72 && yp == 21) {
+						    yp -=3;
+						    Box(95,18,20,2,6,4,"    Xem Qua Trinh");
+	                        Box(95,21,20,2,6,7,"      Bo Qua");
+					    }					 
+				    } else if(c == 13) break;
+			   }
 		    }
-        }
-	    Box(1,21,56,7,1,1," ");
-	    if(Write_File2("D:\RESULT2.OUT.txt", X, N) == 0){
-		    Box(1,21,56,7,1,1," ");
-		    SetColor(4);
-		    gotoxy(2,22); printf("Error: Khong ton tai File D:\RESULT2.OUT.txt");
-	    } 
-		else {
-		    Box(1,21,56,7,1,1," ");
-		    SetColor(10);
-		    gotoxy(2,22); printf("Ket qua  duoc luu vao File D:\RESULT2.OUT.txt thanh cong");
+		    if(yp==18){
+		        	Box(60,0,58,29 +(N-5)*5 ,7,1," ");
+		    	    for( i=1;i<=N;i++){
+		    		    Box(55+9*i,1,5,2,4,7," ");
+		    		    SetColor(7);
+		    		    gotoxy(57+9*i,2); printf("X%d",i);
+		    	    }
+            	    int k=4;
+            	    for( i = 0; i < N; i++) X[i] = 0;
+		            do{
+	                    t = 0;
+	                    for( i = 0; i < N; i++){
+		                    Sum = 0;
+		                    for(j = 0; j < (N+1); j++){
+			                    if(j != i) Sum = Sum + Get(A[i], j)*X[j];
+		                    }
+		                    Y[i] = (Get(A[i],N) - Sum) / Get(A[i], i);
+		                    if(abs(Y[i] - X[i]) >= 0.001) t = 1;
+	                        X[i] = Y[i];
+	                        gotoxy(64+9*i,k); printf("%.3lf",X[i]);
+                        } k++;
+                    }
+                    while(t == 1);
+		    }
 	    }
 	    SetColor(6);
 	    gotoxy(2,23); printf("Nhan phim UP / DOWN va ENTER de tiep tuc cac lua chon");
 	    gotoxy(2,24);
     }
 }
-
 // Hàm Menu Chứa Và Thực Hiện Các Động Lệnh
 void Menu(){
-	int N;
+	int N = 5;
 	int x = 25;
 	int y = 1;
     do{
@@ -495,16 +544,15 @@ void Menu(){
 	   gotoxy(2,22); 
 	   SetColor(4);
 	   printf("ERROR: Loi file D:\DAYSO.IN.txt");
-	   gotoxy(2,23);
+	   gotoxy(2,29);
 	   system("pause");
     }
 	else{	
-	   Interface();
 	   Box(1,21,56,7,1,1," ");
 	   SetColor(10);
 	   gotoxy(2,22);printf("Ma tran doc tu File thanh cong");
 	   SetColor(6);
-	   gotoxy(2,22);printf("Nhan phim UP / DOWN va ENTER de tiep tuc cac lua chon");
+	   gotoxy(2,23);printf("Nhan phim UP / DOWN va ENTER de tiep tuc cac lua chon");
 	   SetColor(7);
 	   gotoxy(17,9);printf("%d",N);
 	   while(true){
@@ -559,7 +607,7 @@ void Menu(){
 	            gotoxy(67,5); printf("%c",char(186));
 	            gotoxy(68,4); printf("%c",char(203));
 	            gotoxy(68,5); printf("%c",char(186));
-                Box(61,6,56,N+1,2,1," ");
+                Box(61,6,56+(N-6)*6,N+1,2,1," ");
 	            SetColor(10);
 	            gotoxy(67,6); printf("%c",char(202));
 	            gotoxy(68,6); printf("%c",char(202));
@@ -626,7 +674,7 @@ void Menu(){
             	    Box(1,21,56,7,1,1," ");
             	    gotoxy(2,22);
             	    SetColor(4);
-            	    printf("ERROR:Ma tran hien khong phai ma tran vuong");
+            	    printf("ERROR: Ma tran hien khong phai ma tran vuong");
            		    gotoxy(2,23);
 		        }
 				else{
@@ -642,7 +690,6 @@ void Menu(){
         }          
     }
 }
-
 int main(){
 	Menu();
 }
