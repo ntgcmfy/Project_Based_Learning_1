@@ -185,7 +185,7 @@ int Write_File1(char *filename, STACK s[], int N){
 			for(NODE *k = s[i].pTop; k != NULL; k = k->pNext){
 		    fprintf( fp, "%.3lf  ", k -> data);
 	        }
-	    fprintf( fp, "%c", c);
+	        fprintf( fp, "%c", c);
         }
     }
     fclose(fp);
@@ -199,10 +199,10 @@ int Write_File2(char *filename,double X[],int N){
 	if(fp == NULL) return 0;
     else{
 	   for(int i = 0; i < N; i++){
-		fprintf(fp, "X%d=%.3lf\n", i+1, X[i]);
+		fprintf(fp, "X%d = %.3lf\n", i+1, X[i]);
 	   }
     }
-     fclose(fp);
+    fclose(fp);
     return 1;
 }
 
@@ -215,11 +215,11 @@ int Read_File(char *filename, STACK s[], int N){
     double x;
     fopen_s(&fp,filename,"r");
      if(fp == NULL) return 0;
-   else{ while( fscanf( fp , "%lf " , &x) != EOF){//Đọc Hết Các Giá Trị trong File vào Stack k
+   else{ while( fscanf( fp , "%lf " , &x) != EOF){        //Đọc Hết Các Giá Trị trong File vào Stack k
 	   NODE *p = KhoiTaoNode(x);
 	   Push( k , p );
 	   dem++;
-	  }Reverse(k);//Hoán đổi ngược lại các vị trí
+	  }Reverse(k);           //Hoán đổi ngược lại các vị trí
     }fclose( fp );
     if(dem != N*(N-1)) return 2;
     for(int i = 0; i < N; i++){
@@ -235,7 +235,7 @@ int Read_File(char *filename, STACK s[], int N){
 
 //Hàm Kiểm Tra Ma Trận Có Phải Ma Trận Vuông Hay Không
 int CheckMatrix(STACK s[],int N){
-	int dem=0;
+	int dem = 0;
 	for(int i=0;i<N;i++){
 		for(NODE *k=s[i].pTop;k!=NULL;k=k->pNext){
 			dem++;
@@ -286,11 +286,13 @@ int Gauss_Terms(STACK A[], int N){
 			 }
 		 }
 	 }
-	  	max1 = 0;
+	max1 = 0;
+	max3 = 0;
 	for(int i = 0; i < N; i++){
 	 	r1[i] = 0;
  	 	for(int j = 0; j < N; j++){
 	 	    r1[i] += abs(B[i][j]);	
+	 	    max3 += B[i][j] * B[i][j];
 		}
 		if(max1 < r1[i] ) max1 = r1[i];
 	}
@@ -302,12 +304,6 @@ int Gauss_Terms(STACK A[], int N){
 		}
 		if(max2 < r2[j]) max2 = r2[j]; 
 	 }
-	 max3 = 0;
-	for(int i = 0; i < N; i++){
-	 	for(int j = 0; j < N; j++){
-	 		max3 += B[i][j] * B[i][j];
-		}
-	}
 	if(max1 < 1 || max2 < 1 || max3 < 1) return 1;
 	else return 0;
 }
@@ -351,11 +347,11 @@ void Interface(){
 
 //Hàm tìm nghiệm X khi biết AX=B với A là ma trận đọc từ file và B là mảng nhập từ bàn phím
 void Find_X(STACK S[], int N){
-    STACK A[N]; //Sử Dụng 1 Stack Thay Thế
+    STACK A[N];              //Sử Dụng 1 Stack Thay Thế
     double X[N], Y[N], B[N];
     int i, j;
     int yp = 18;
-	for( i = 0; i < N; i++){ //Gán Stack Đã Đọc Từ File Qua Stack Thay Thế
+	for( i = 0; i < N; i++){            //Gán Stack Đã Đọc Từ File Qua Stack Thay Thế
 	  KhoiTaoStack(A[i]);
 	  A[i] = S[i];
 	} 
@@ -445,12 +441,12 @@ void Find_X(STACK S[], int N){
 	        if(Write_File2("D:\RESULT2.OUT.txt", X, N) == 0){
 		        Box(1,21,56,7,1,1," ");
 		        SetColor(4);
-		        gotoxy(2,22); printf("Error: Khong ton tai File D:\RESULT2.OUT.txt");
+		        gotoxy(2,22); printf("Error: Loi File D:\RESULT2.OUT.txt");
 	        } 
 		    else {
 		        Box(1,21,56,7,1,1," ");
 		        SetColor(10);
-		        gotoxy(2,22); printf("Ket qua  duoc luu vao File D:\RESULT2.OUT.txt thanh cong");
+		        gotoxy(2,22); printf("Ket qua duoc luu vao File D:\RESULT2.OUT.txt thanh cong");
 	        }
 	        Box(95,18,20,2,6,4,"    Xem Qua Trinh");
 	        Box(95,21,20,2,6,7,"      Bo Qua");
@@ -631,14 +627,15 @@ void Menu(){
                 printf("VUI LONG NHAP SO THUC");
                 Box(1,21,56,7,1,1," ");
                 SetColor(10);
-	            gotoxy(2,22);
-	            printf("Cac phan tu se duoc them vao dau moi hang cua ma tran");
+	        gotoxy(2,22);
+	        printf("Cac phan tu se duoc them vao dau moi hang cua ma tran");
+	        gotoxy(2,23); printf("va luu vao file D:\RESULT1.OUT.txt");
     	        gotoxy(60,1);
     	        SetColor(3);
     	        Box(62,1,40,2,5,7,"Nhap cac phan tu can them vao ma tran");
     	        SetColor(6);
 	            for(int i = 1; i <= N; i++){
-		        double value;
+		            double value;
 		            for( i = 1; i <= N; i++){
 		  	            if(i==1) SetColor(5);
 		   	            else SetColor(6);
@@ -652,13 +649,24 @@ void Menu(){
 	  	                scanf("%lf", &value);
 		                NODE *p = KhoiTaoNode(value);
 		                Push(s[i-1], p);
-                    }
+                    }    
                 }
-                Box(1,21,56,7,1,1," ");
+                if(Write_File1("D:\RESULT1.OUT.txt",s,N)==0)
+		{
+			Box(1,21,56,7,1,1," ");
+			SetColor(4);
+	                gotoxy(2,22); printf("ERROR: Loi File D:\RESULT1.OUT.txt");
+		}
+		else{
+	            Box(1,21,56,7,1,1," ");
+                    SetColor(10);
+	            gotoxy(2,22); printf("Ma tran moi da duoc luu vao File D:\RESULT1.OUT.txt");
+	            gotoxy(2,23); printf("thanh cong");
+		}
                 SetColor(6);
-	            gotoxy(2,22);
-	            printf("Nhan phim UP / DOWN va ENTER de tiep tuc cac lua chon");
-	            gotoxy(2,23);
+	        gotoxy(2,24);
+	        printf("Nhan phim UP / DOWN va ENTER de tiep tuc cac lua chon");
+	        gotoxy(2,25);
             }
             else if(yp==13){
         	    Box(1,21,56,7,1,1," ");
